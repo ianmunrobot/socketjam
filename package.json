@@ -1,0 +1,11 @@
+{
+  "name": "socketjam",
+  "version": "1.0.0",
+  "description": "a tone.js and socket.io based collaborative music improv app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ian munro",
+  "license": "ISC"
+}
