@@ -97,50 +97,100 @@ function onFrame(event) {
 tool.minDistance = 1;
 tool.maxDistance = 45;
 
-var path;
+var paths = {}
 
 function onMouseDown(event) {
-	path = new Path();
+
+	var outEvent = {
+		id: socket.id,
+		x: event.point.x,
+		y: event.point.y,
+		// point: event.point,
+	}
+  socket.emit('mouseDown', outEvent);
+}
+
+socket.on('mouseDown', function(event) {
+	// console.log(event);
+	var path = new Path();
 	path.fillColor = {
 		hue: Math.random() * 360,
 		saturation: 1,
 		brightness: 1
 	};
-
-	path.add(event.point);
-  socket.emit('mouseDown', [event.point.x, event.point.y]);
-}
+	path.add(new Point(event.x, event.y));
+	if (!paths[event.id]) {
+		paths[event.id] = {
+			past: []
+		}
+	}
+	paths[event.id].currentPath = path;
+})
 
 function onMouseDrag(event) {
-	var step = event.delta / 2;
+	// var step = event.delta / 2;
+	// step.angle += 90;
+
+	// var top = event.middlePoint + step;
+	// var bottom = event.middlePoint - step;
+
+	// path.add(top);
+	// path.insert(0, bottom);
+	// path.smooth();
+	var outEvent = {
+		id: socket.id,
+		x: event.point.x,
+		y: event.point.y,
+		delta: event.delta,
+		middlePoint: event.middlePoint,
+	}
+  socket.emit('mouseDrag', outEvent)
+}
+
+socket.on('mouseDrag', function(event) {
+	var middlePoint = new Point(event.middlePoint[1], event.middlePoint[2])
+	var step = new Point(event.delta[1], event.delta[2]) / 2;
 	step.angle += 90;
 
-	var top = event.middlePoint + step;
-	var bottom = event.middlePoint - step;
+	var top = middlePoint + step;
+	var bottom = middlePoint - step;
 
-	path.add(top);
-	path.insert(0, bottom);
-	path.smooth();
-  socket.emit('mouseDrag', [event.point.x, (event.point.y)])
-}
+	var currentPath = paths[event.id].currentPath;
+
+	currentPath.add(top);
+	currentPath.insert(0, bottom);
+	currentPath.smooth();
+
+})
 
 function onMouseUp(event) {
-	path.add(event.point);
-	path.closed = true;
-	path.smooth();
-	var counter = path._segments.length;
-	var counter2 = counter / 2
-	timedRemove(path)
-  socket.emit('mouseUp')
+	var outEvent = {
+		id: socket.id,
+		x: event.point.x,
+		y: event.point.y,
+	}
+
+  socket.emit('mouseUp', outEvent)
 }
 
+socket.on('mouseUp', function(event) {
+	var current = paths[event.id].currentPath;
+	current.add(new Point(event.x, event.y));
+	current.closed = true;
+	current.smooth();
+	paths[event.id].past.push(current)
+	timedRemove(current, event.id)
+	delete paths[event.id].currentPath
+})
 
-var timedRemove = function(pathToRemove) {
+
+var timedRemove = function(pathToRemove, id) {
 	var alpha = 1.0
 	var fadeOut = window.setInterval(function() {
 		if (alpha === 0) {
 			window.clearInterval(fadeOut)
 			pathToRemove.remove()
+			paths[id].past.unshift()
 		} else {
 			pathToRemove.fillColor.alpha -= 0.05
 		}

@@ -50,31 +50,26 @@ io.on('connection', socket => {
       // })
 
       // on 'draw' add to memory and draw to others in room
-      socket.to(room).on('mouseDown', (payload) => {
-          console.log('mouseDown');
-          console.log(payload);
-          const event = {
-            id: socket.id,
-            x: payload[0],
-            y: payload[1]
-          }
-          io.to(room).emit('mouseDown', event)
+      socket.to(room).on('mouseDown', (inEvent) => {
+        // const event = {
+        //   id: socket.id,
+        //   x: inEvent.x,
+        //   y: inEvent.y
+        // }
+        io.to(room).emit('mouseDown', inEvent)
       })
 
-      socket.to(room).on('mouseDrag', (payload) => {
-          console.log('mouseDrag');
-          console.log(payload);
-          const event = {
-            id: socket.id,
-            x: payload[0],
-            y: payload[1]
-          }
-          io.to(room).emit('mouseDrag', event)
+      socket.to(room).on('mouseDrag', (inEvent) => {
+        // const event = {
+        //   id: socket.id,
+        //   x: inEvent.x,
+        //   y: inEvent.y
+        // }
+        io.to(room).emit('mouseDrag', inEvent)
       })
 
-      socket.to(room).on('mouseUp', () => {
-          console.log('mouseUp');
-          io.to(room).emit('mouseUp', socket.id)
+      socket.to(room).on('mouseUp', (event) => {
+          io.to(room).emit('mouseUp', event)
       })
 
       // log on disconnect

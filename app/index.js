@@ -57,7 +57,6 @@ socket.on('mouseDrag', (event) => {
   changeFrequency(event.id, 'y', event.y)
 })
 
-socket.on('mouseUp', (id) => {
-  console.log(synthesizers);
-  release(id)
+socket.on('mouseUp', (event) => {
+  release(event.id)
 })
