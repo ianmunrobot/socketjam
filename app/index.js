@@ -37,6 +37,8 @@ socket.on('populateSynths', (ids) => {
   ids.forEach(id => {
     let newXSynth1 = new Tone.Synth().chain(reverb)
     let newYSynth2 = new Tone.Synth().chain(reverb)
+    newXSynth1.volume.value = -12;
+    newYSynth2.volume.value = -12;
     synthesizers[id] = {
       x: newXSynth1,
       y: newYSynth2
@@ -45,7 +47,6 @@ socket.on('populateSynths', (ids) => {
 })
 
 socket.on('mouseDown', (event) => {
-  console.log('attack', event);
   changeFrequency(event.id, 'x', event.x)
   changeFrequency(event.id, 'y', event.y)
   attack(event.id)
@@ -54,11 +55,9 @@ socket.on('mouseDown', (event) => {
 socket.on('mouseDrag', (event) => {
   changeFrequency(event.id, 'x', event.x)
   changeFrequency(event.id, 'y', event.y)
-  console.log('coords', event);
 })
 
 socket.on('mouseUp', (id) => {
   console.log(synthesizers);
-  console.log('mouseUp', id);
   release(id)
 })
