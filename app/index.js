@@ -18,9 +18,16 @@ function changeFrequency(id, direction, frequency) {
   synthesizers[id][direction].frequency.value = frequency
 }
 
+function changeAmplitude(id, amplitude) {
+  // var newAmp = amplitude * -3
+  // console.log('newAmp:', newAmp);
+  // synthesizers[id].x.volume.value = newAmp;
+  // synthesizers[id].y.volume.value = newAmp;
+}
+
 function attack(id) {
   synthesizers[id].x.triggerAttack(synthesizers[id].x.frequency.value)
-  synthesizers[id].y.triggerAttack(synthesizers[id].y.frequency.value)
+  synthesizers[id].y.triggerAttack(synthesizers[id].x.frequency.value * 1.5)
 }
 
 function release(id) {
@@ -35,8 +42,8 @@ socket.on('connect', () => {
 
 socket.on('populateSynths', (ids) => {
   ids.forEach(id => {
-    let newXSynth1 = new Tone.Synth().chain(reverb)
-    let newYSynth2 = new Tone.Synth().chain(reverb)
+    let newXSynth1 = new Tone.DuoSynth({harmonicity: 1.5}).chain(reverb)
+    let newYSynth2 = new Tone.DuoSynth({harmonicity: 1.5}).chain(reverb)
     newXSynth1.volume.value = -12;
     newYSynth2.volume.value = -12;
     synthesizers[id] = {
@@ -48,13 +55,17 @@ socket.on('populateSynths', (ids) => {
 
 socket.on('mouseDown', (event) => {
   changeFrequency(event.id, 'x', event.x)
-  changeFrequency(event.id, 'y', event.y)
+  changeFrequency(event.id, 'y', event.x * 1.5)
   attack(event.id)
 })
 
 socket.on('mouseDrag', (event) => {
+  // console.log(event);
+  let amplitude = Math.abs(event.delta[1]) + Math.abs(event.delta[2])
+  changeAmplitude(event.id, amplitude)
+
   changeFrequency(event.id, 'x', event.x)
-  changeFrequency(event.id, 'y', event.y)
+  changeFrequency(event.id, 'y', event.x * 1.5)
 })
 
 socket.on('mouseUp', (event) => {

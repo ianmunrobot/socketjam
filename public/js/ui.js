@@ -59,7 +59,6 @@ for (var i = 0; i < count; i++) {
 	placedSymbol.scale(i / count);
 	placedSymbol.direction = 2 * Math.PI * Math.random()
 }
-console.log(view.size);
 
 // The onFrame function is called up to 60 times a second:
 function onFrame(event) {
@@ -128,15 +127,6 @@ socket.on('mouseDown', function(event) {
 })
 
 function onMouseDrag(event) {
-	// var step = event.delta / 2;
-	// step.angle += 90;
-
-	// var top = event.middlePoint + step;
-	// var bottom = event.middlePoint - step;
-
-	// path.add(top);
-	// path.insert(0, bottom);
-	// path.smooth();
 	var outEvent = {
 		id: socket.id,
 		x: event.point.x,

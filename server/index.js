@@ -6,8 +6,8 @@ const volleyball = require('volleyball')
 
 const express = require('express');
 const app = express();
-
 const socketio = require('socket.io');
+const chalk = require('chalk')
 
 server.on('request', app);
 
@@ -29,8 +29,8 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use(volleyball)
 
 io.on('connection', socket => {
-    console.log('New client connection');
-    console.log(socket.id);
+    console.log(chalk.blue('New client connection'));
+    console.log(chalk.blue(socket.id));
 
     // join room on create (room name is passed from client)
     socket.on('create', room => {
@@ -43,28 +43,13 @@ io.on('connection', socket => {
       // dispatch the current synths (including self)
       io.to(room).emit('populateSynths', memory[room])
 
-      // on 'draw' add to memory and draw to others in room
-      // socket.to(room).on('draw', (...payload) => {
-      //     memory[room].push(payload);
-      //     io.to(room).emit('otherDrawing', ...payload)
-      // })
 
       // on 'draw' add to memory and draw to others in room
       socket.to(room).on('mouseDown', (inEvent) => {
-        // const event = {
-        //   id: socket.id,
-        //   x: inEvent.x,
-        //   y: inEvent.y
-        // }
         io.to(room).emit('mouseDown', inEvent)
       })
 
       socket.to(room).on('mouseDrag', (inEvent) => {
-        // const event = {
-        //   id: socket.id,
-        //   x: inEvent.x,
-        //   y: inEvent.y
-        // }
         io.to(room).emit('mouseDrag', inEvent)
       })
 
@@ -75,11 +60,9 @@ io.on('connection', socket => {
       // log on disconnect
       socket.on('disconnect', () => {
         socket.leave(room);
-        console.log('before', memory[room]);
+        console.log(chalk.yellow(`leaving: ${socket.id}`))
         let deleteIndex = memory[room].indexOf(socket.id)
         if (deleteIndex !== -1) memory[room].splice(deleteIndex)
-        console.log('after', memory[room]);
-        console.log('disconnect :()');
       });
     })
   });
