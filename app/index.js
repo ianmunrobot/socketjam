@@ -1,6 +1,8 @@
 const Tone = require('tone')
 const EventEmitter = require('./event-emitter')
 
+const drums = require('./basic-beat')
+
 var socket = io(window.location.origin)
 let room = window.location.pathname.slice(1);
 
