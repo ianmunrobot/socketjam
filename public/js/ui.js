@@ -1,7 +1,10 @@
-var height = window.innerHeight;
-var width = window.innerWidth;
-console.log(height);
-console.log(width);
+// var socket = io(window.location.origin)
+
+// window sizing
+var myCanvas = document.getElementById('paperCanvas')
+var height = myCanvas.height;
+var width = myCanvas.width;
+
 
 var hCount = height/80;
 var wCount = width/80
@@ -27,4 +30,41 @@ function onFrame(event) {
  squareSymbol.definition.fillColor.hue += .01;
  // rotate
  squareSymbol.definition.rotate(0.3);
+}
+
+tool.minDistance = 10;
+tool.maxDistance = 45;
+
+var path;
+
+function onMouseDown(event) {
+	path = new Path();
+	path.fillColor = {
+		hue: Math.random() * 360,
+		saturation: 1,
+		brightness: 1
+	};
+
+	path.add(event.point);
+  socket.emit('mouseDown', [event.point.x, event.point.y]);
+}
+
+function onMouseDrag(event) {
+	var step = event.delta / 2;
+	step.angle += 90;
+
+	var top = event.middlePoint + step;
+	var bottom = event.middlePoint - step;
+
+	path.add(top);
+	path.insert(0, bottom);
+	path.smooth();
+  socket.emit('mouseDrag', [event.point.x, (event.point.y)])
+}
+
+function onMouseUp(event) {
+	path.add(event.point);
+	path.closed = true;
+	path.smooth();
+  socket.emit('mouseUp')
 }
