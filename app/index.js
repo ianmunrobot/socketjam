@@ -1,6 +1,10 @@
 const Tone = require('tone')
 const EventEmitter = require('./event-emitter')
 
+StartAudioContext(Tone.context, '#test').then(function(){
+
+})
+
 const drums = require('./basic-beat')
 
 var socket = io(window.location.origin)

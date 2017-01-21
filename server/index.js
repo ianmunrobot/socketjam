@@ -24,6 +24,7 @@ let variable = path.join(__dirname, '../public')
 
 // serve static files
 app.use('/paper', express.static(path.join(__dirname, '../node_modules/paper/dist')));
+app.use('/startaudiocontext', express.static(path.join(__dirname, '../node_modules/startaudiocontext')));
 app.use('/socket', express.static(path.join(__dirname, '../node_modules/socket.io-client/dist')));
 app.use(express.static(path.join(__dirname, '../public')));
 
