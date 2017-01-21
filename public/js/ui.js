@@ -45,7 +45,10 @@ var circlePath = new Path.Circle({
 	center: [0, 0],
 	radius: 10,
 	fillColor: 'white',
-	strokeColor: 'white'
+	strokeColor: 'white',
+	shadowColor: 'cyan',
+	shadowBlur: 10,
+	shadowOffset: [(Math.floor(Math.random() * 4) - 2), (Math.floor(Math.random() * 4) - 2)]
 });
 
 var symbol = new Symbol(circlePath);
@@ -57,7 +60,8 @@ for (var i = 0; i < count; i++) {
 	var placedSymbol = symbol.place(center);
 	// placedSymbol.fillColor.hue += (Math.random() * 8)
 	placedSymbol.scale(i / count);
-	placedSymbol.direction = 2 * Math.PI * Math.random()
+	placedSymbol.direction = 2 * Math.PI * Math.random();
+	if (i === 50) console.log(placedSymbol);
 }
 
 // The onFrame function is called up to 60 times a second:
@@ -67,13 +71,11 @@ function onFrame(event) {
 	for (var i = 0; i < count; i++) {
 		var item = project.activeLayer.children[i];
 
-		// Move the item 1/20th of its width to the right. This way
+		// Move the item 1/20th of its width in the direction of its motion. This way
 		// larger circles move faster than smaller circles:
 		var speed = item.bounds.width / 30;
 		item.position.x += Math.cos(item.direction) * speed;
 		item.position.y += Math.sin(item.direction) * speed;
-
-		//item.position.x += item.bounds.width / 20;
 
 		// If the item has left the view on the right, move it back
 		// to the left:
