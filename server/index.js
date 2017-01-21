@@ -16,8 +16,9 @@ const io = socketio(server);
 // store the current rooms' data
 const memory = {};
 
+var port = process.env.PORT || 1337
 
-server.listen(1337, () => console.log('The server is listening on port 1337!'));
+server.listen(port, () => console.log('The server is listening on port 1337!'));
 
 let variable = path.join(__dirname, '../public')
 
