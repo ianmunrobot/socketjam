@@ -110,7 +110,6 @@ function onMouseDown(event) {
 }
 
 socket.on('mouseDown', function(event) {
-	// console.log(event);
 	var path = new Path();
 	path.fillColor = {
 		hue: Math.random() * 360,
