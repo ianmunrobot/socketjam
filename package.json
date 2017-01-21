@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-watch": "webpack -w",
+    "build": "webpack",
     "start": "nodemon server/index.js"
   },
   "author": "ian munro",
