@@ -23,10 +23,12 @@
     "chalk": "^1.1.3",
     "express": "^4.14.0",
     "http": "0.0.0",
-    "paper": "^0.10.2",
+    "nodemon": "^1.11.0",
     "path": "^0.12.7",
     "socket.io": "^1.7.2",
+    "startaudiocontext": "^1.2.0",
     "tone": "^0.9.0",
-    "volleyball": "^1.4.1"
+    "volleyball": "^1.4.1",
+    "webpack": "^1.14.0"
   }
 }

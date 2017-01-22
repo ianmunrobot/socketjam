@@ -64,7 +64,8 @@ for (var i = 0; i < count; i++) {
 	var placedSymbol = symbol.place(center);
 	// symbol.fillColor.hue += (Math.random() * 8)
 	placedSymbol.scale(i / count);
-	placedSymbol.direction = 2 * Math.PI * Math.random()
+	placedSymbol.direction = 2 * Math.PI * Math.random();
+	if (i === 50) console.log(placedSymbol);
 }
 
 // The onFrame function is called up to 60 times a second:
@@ -74,13 +75,15 @@ function onFrame(event) {
 	for (var i = 0; i < count; i++) {
 		var item = project.activeLayer.children[i];
 
-		// Move the item 1/20th of its width. This way
+
+		// Move the item 1/20th of its width in the direction of its motion. This way
 		// larger circles move faster than smaller circles:
 		var speed = item.bounds.width / 30;
 		item.position.x += Math.cos(item.direction) * speed;
 		item.position.y += Math.sin(item.direction) * speed;
 
 		// If the item has the view, move it back
+
 		if (item.bounds.left > view.size.width) {
 			item.position.x = item.bounds.width;
 		}
@@ -95,7 +98,6 @@ function onFrame(event) {
 		}
 	}
 }
-
 
 tool.minDistance = 1;
 tool.maxDistance = 45;
@@ -113,7 +115,6 @@ function onMouseDown(event) {
 }
 
 socket.on('mouseDown', function(event) {
-	// console.log(event);
 	var path = new Path();
 	path.fillColor = {
 		hue: Math.random() * 360,

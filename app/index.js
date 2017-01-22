@@ -4,6 +4,13 @@ const socket = require('./socket')
 const spaceCircle = require('./views/spaceCircle')
 const coolBlobs = require('./views/coolBlobs')
 
+StartAudioContext(Tone.context, '#test').then(function(){
+
+})
+
+const drums = require('./basic-beat')
+
+
 const canvas = document.getElementById('paperCanvas');
 paper.setup(canvas);
 paper.install(window);
