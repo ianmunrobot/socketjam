@@ -37,10 +37,14 @@ function onFrame(event) {
 
 */
 
+
+
+
+
 // The amount of circles we want to make:
 var count = 100;
 
-// Create a symbol, which we will use to place instances of later:
+// Space Circle Path:
 var circlePath = new Path.Circle({
 	center: [0, 0],
 	radius: 10,
@@ -58,7 +62,7 @@ for (var i = 0; i < count; i++) {
 	// The center position is a random point in the view:
 	var center = Point.random() * view.size;
 	var placedSymbol = symbol.place(center);
-	// placedSymbol.fillColor.hue += (Math.random() * 8)
+	// symbol.fillColor.hue += (Math.random() * 8)
 	placedSymbol.scale(i / count);
 	placedSymbol.direction = 2 * Math.PI * Math.random();
 	if (i === 50) console.log(placedSymbol);
@@ -71,14 +75,15 @@ function onFrame(event) {
 	for (var i = 0; i < count; i++) {
 		var item = project.activeLayer.children[i];
 
+
 		// Move the item 1/20th of its width in the direction of its motion. This way
 		// larger circles move faster than smaller circles:
 		var speed = item.bounds.width / 30;
 		item.position.x += Math.cos(item.direction) * speed;
 		item.position.y += Math.sin(item.direction) * speed;
 
-		// If the item has left the view on the right, move it back
-		// to the left:
+		// If the item has the view, move it back
+
 		if (item.bounds.left > view.size.width) {
 			item.position.x = item.bounds.width;
 		}
@@ -94,14 +99,12 @@ function onFrame(event) {
 	}
 }
 
-
 tool.minDistance = 1;
 tool.maxDistance = 45;
 
 var paths = {}
 
 function onMouseDown(event) {
-
 	var outEvent = {
 		id: socket.id,
 		x: event.point.x,
