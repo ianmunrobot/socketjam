@@ -82,13 +82,15 @@ socket.on('mouseUp', (event) => {
 // The amount of circles we want to make:
 var count = 100;
 
-
 // Space Circle Path:
 var circlePath = new Path.Circle({
 	center: [0, 0],
 	radius: 10,
 	fillColor: 'white',
 	strokeColor: 'white',
+	shadowColor: 'cyan',
+	shadowBlur: 10,
+	shadowOffset: [(Math.floor(Math.random() * 4) - 2), (Math.floor(Math.random() * 4) - 2)]
 });
 
 var symbol = new Symbol(circlePath);

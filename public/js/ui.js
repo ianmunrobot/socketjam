@@ -50,6 +50,9 @@ var circlePath = new Path.Circle({
 	radius: 10,
 	fillColor: 'white',
 	strokeColor: 'white',
+	shadowColor: 'cyan',
+	shadowBlur: 10,
+	shadowOffset: [(Math.floor(Math.random() * 4) - 2), (Math.floor(Math.random() * 4) - 2)]
 });
 
 var symbol = new Symbol(circlePath);
