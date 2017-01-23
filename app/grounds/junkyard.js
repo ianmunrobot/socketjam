@@ -1,22 +1,24 @@
 const Tone = require('tone');
 
+
 // general drum compressor
 var drumCompress = new Tone.Compressor({
-		"threshold" : -30,
+		"threshold" : -15,
 		"ratio" : 6,
 		"attack" : 0.3,
 		"release" : 0.1
-	}).toMaster();
+	}).connect(Tone.Master)
 
 // low drum part
 var drum1 = new Tone.MembraneSynth({
   "pitchDecay" : 0.016,
   "octaves" : 2,
   "envelope" : {
-    "attack" : 0.0006,
+    "attack" : 0.006,
     "decay" : 0.5,
     "sustain" : 0
-  }
+  },
+  "volume": -6
 }).chain(drumCompress);
 
 
@@ -73,7 +75,7 @@ dingPart.loopEnd = "2m";
 			"envelope" : {
 				"decay" : 0.4,
 			},
-			"volume" : -18
+			"volume" : -24
 		}).chain(drumCompress)
 
 var bellPart2 = new Tone.Part(function(time, event){
