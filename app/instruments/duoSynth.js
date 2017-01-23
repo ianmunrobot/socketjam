@@ -1,14 +1,13 @@
 const Tone = require('tone')
 
+const reverb = require('../toneCenter').reverb
 // const synthesizers = require('../toneCenter')
 // console.log('in duo', synthesizers);
 
 const socket = require('../socket')
 
 module.exports = function(synthesizers) {
-
-  //create a synth and connect it to the master output (your speakers)
-  var reverb = new Tone.JCReverb(0.25).connect(Tone.Master);
+  console.log(synthesizers);
 
   // helper function - change synth frequency
   function changeFrequency(id, direction, frequency) {
@@ -40,7 +39,8 @@ module.exports = function(synthesizers) {
       newYSynth2.volume.value = -15;
       synthesizers[id] = {
         x: newXSynth1,
-        y: newYSynth2
+        y: newYSynth2,
+        random: Math.floor(Math.random() * 100)
       }
     })
   })

@@ -2,16 +2,16 @@ const Tone = require('tone')
 
 // const synthesizers = {};
 
-const duoSynth = require('./instruments/duoSynth')
+//create a main reverb element
+const reverb = new Tone.JCReverb(0.25).connect(Tone.Master);
 
-var start = function (synthesizers) {
+var start = function () {
   StartAudioContext(Tone.context, '#test').then(function(){
 
   })
-  duoSynth(synthesizers);
 }
 
 module.exports = {
   start,
-  duoSynth,
+  reverb,
 }
