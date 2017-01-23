@@ -7,10 +7,16 @@ const coolBlobs = require('./views/coolBlobs')
 
 const start = require('./toneCenter').start
 const duoSynth = require('./instruments/duoSynth');
+const tunedSynth = require('./instruments/tunedSynth');
 
 const views = {
 	spaceCircle,
 	coolBlobs
+}
+
+const instruments = {
+	duoSynth,
+	tunedSynth
 }
 
 // main synth memory
@@ -18,13 +24,14 @@ const synthesizers = {};
 
 // start with audio defaults
 start();
-duoSynth(synthesizers)
-const drums = require('./basic-beat')
+tunedSynth(synthesizers)
+const drums = require('./grounds/spacey')
 
-// menu click handler
-$('a').on('click', function(e) {
+// view click handler
+$('#views a').on('click', function(e) {
+	console.log(this);
 	// update menu
-	$('li').removeClass('active')
+	$('#views li').removeClass('active')
 	$(this).parent().addClass('active')
 	e.preventDefault()
 	// reset socket listeners
@@ -37,7 +44,22 @@ $('a').on('click', function(e) {
 	views[this.id]();
 
 	// restart synth
-	duoSynth(synthesizers);
+	tunedSynth(synthesizers);
+})
+
+// instrument click handler
+$('#instruments a').on('click', function(e) {
+	// update menu
+	$('#instruments li').removeClass('active')
+	$(this).parent().addClass('active')
+	e.preventDefault()
+	// reset socket listeners
+	socket.removeAllListeners('serverDown');
+	socket.removeAllListeners('serverDrag');
+	socket.removeAllListeners('serverUp');
+
+	// restart synth
+	instruments[this.id](synthesizers)
 })
 
 // set up canvas
@@ -57,7 +79,7 @@ socket.on('connect', () => {
 
 // drawing tool emitters
 var tool = new Tool()
-tool.minDistance = 10;
+tool.minDistance = 1;
 tool.maxDistance = 30;
 
 tool.onMouseDown = (event) => {

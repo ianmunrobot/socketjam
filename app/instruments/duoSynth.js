@@ -1,8 +1,6 @@
 const Tone = require('tone')
 
 const reverb = require('../toneCenter').reverb
-// const synthesizers = require('../toneCenter')
-// console.log('in duo', synthesizers);
 
 const socket = require('../socket')
 
