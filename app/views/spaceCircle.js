@@ -1,7 +1,7 @@
 const socket = require('../socket')
+const paths = require('./index')
 
 module.exports = function() {
-	var paths = {}
 	// The amount of circles we want to make:
 	var count = 100;
 
@@ -139,6 +139,7 @@ module.exports = function() {
 				paths[id].past.unshift()
 			} else {
 				pathToRemove.fillColor.alpha -= 0.05
+				alpha -= 0.05
 			}
 		}, 50)
 	}

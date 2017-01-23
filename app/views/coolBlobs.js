@@ -1,7 +1,8 @@
 const socket = require('../socket')
+const paths = require('./index')
 
 module.exports = function() {
-  var paths = {}
+
   var count = 20
   var radiusSize = 100;
   var shadowBlur = 100;
@@ -65,11 +66,11 @@ module.exports = function() {
   }
 
   view.onFrame = (event) => {
-      for (var i = 0; i < count; i++) {
-        var item = project.activeLayer.children[i];
-        item.position.y = item.position.y + item.speed
-        if (item.position.y > view.size.height + 60 || item.position.y < -60) item.speed *= -1
-      }
+    for (var i = 0; i < count; i++) {
+      var item = project.activeLayer.children[i];
+      item.position.y = item.position.y + item.speed
+      if (item.position.y > view.size.height + 60 || item.position.y < -60) item.speed *= -1
+    }
   }
 
   // Space Circle Path:
@@ -82,23 +83,25 @@ module.exports = function() {
     });
     // create memory queue
     if (!paths[event.id]) {
-      paths[event.id] = [];
+      paths[event.id] = {
+        past: []
+      };
     }
-    paths[event.id].push(circlePath)
+    paths[event.id].past.push(circlePath)
     window.setTimeout(function() {
       itemTimeout(circlePath, event.id);
     }, 300);
   })
 
   socket.on('serverDrag', function(event) {
-    var last = paths[event.id][paths[event.id].length - 1]
+    var last = paths[event.id].past[paths[event.id].past.length - 1]
     var circlePath = new Path.Circle({
       center: [event.x, event.y],
       radius: 20 + event.delta[1] + event.delta[2],
       fillColor: last.fillColor,
     });
     circlePath.fillColor.hue += Math.floor(Math.random() * 4)
-    paths[event.id].push(circlePath)
+    paths[event.id].past.push(circlePath)
     window.setTimeout(function() {
       itemTimeout(circlePath, event.id)
     }, 300)
@@ -111,10 +114,10 @@ module.exports = function() {
   var itemTimeout = function(pathToRemove, id) {
     var alpha = 1.0
     var fadeOut = window.setInterval(function() {
-      if (alpha === 0) {
-        window.clearInterval(fadeOut)
+      if (alpha <= 0) {
         pathToRemove.remove()
-        paths[id].unshift()
+        paths[id].past.unshift()
+        window.clearInterval(fadeOut)
       } else {
         pathToRemove.fillColor.alpha -= 0.1
         alpha -= 0.1
