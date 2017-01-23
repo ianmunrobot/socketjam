@@ -5,6 +5,19 @@ const reverb = require('../toneCenter').reverb
 const socket = require('../socket')
 
 module.exports = function(synthesizers) {
+  function populate () {
+    Object.keys(synthesizers).forEach(id => {
+      let newXSynth1 = new Tone.DuoSynth({harmonicity: 1.5}).chain(reverb)
+      let newYSynth2 = new Tone.DuoSynth({harmonicity: 1.5}).chain(reverb)
+      newXSynth1.volume.value = -15;
+      newYSynth2.volume.value = -15;
+      synthesizers[id] = {
+        x: newXSynth1,
+        y: newYSynth2,
+      }
+    })
+  }
+  populate()
 
   // helper function - change synth frequency
   function changeFrequency(id, direction, frequency) {
@@ -37,7 +50,6 @@ module.exports = function(synthesizers) {
       synthesizers[id] = {
         x: newXSynth1,
         y: newYSynth2,
-        random: Math.floor(Math.random() * 100)
       }
     })
   })
