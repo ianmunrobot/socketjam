@@ -9,6 +9,14 @@ const start = require('./toneCenter').start
 const duoSynth = require('./instruments/duoSynth');
 const tunedSynth = require('./instruments/tunedSynth');
 
+const spacey = require('./grounds/spacey')
+const junkyard = require('./grounds/junkyard')
+
+const grounds = {
+	spacey,
+	junkyard
+}
+
 const views = {
 	spaceCircle,
 	coolBlobs
@@ -19,47 +27,81 @@ const instruments = {
 	tunedSynth
 }
 
+const state = {
+	view: 'spaceCircle',
+	synth: 'duoSynth',
+	ground: ['spacey']
+}
+
+// ids of room members
+const users = {}
+
 // main synth memory
 const synthesizers = {};
 
 // start with audio defaults
 start();
-tunedSynth(synthesizers)
-const drums = require('./grounds/spacey')
+instruments[state.synth](synthesizers)
+
+grounds.spacey.start()
 
 // view click handler
 $('#views a').on('click', function(e) {
-	console.log(this);
+	// update state
+	state.view = this.id
 	// update menu
 	$('#views li').removeClass('active')
 	$(this).parent().addClass('active')
 	e.preventDefault()
 	// reset socket listeners
-	socket.removeAllListeners('serverDown');
-	socket.removeAllListeners('serverDrag');
-	socket.removeAllListeners('serverUp');
+	socket.removeAllListeners('serverDrawDown');
+	socket.removeAllListeners('serverDrawDrag');
+	socket.removeAllListeners('serverDrawUp');
 
 	// reset and repopulate view
 	project.clear();
-	views[this.id]();
+	views[state.view]();
+})
 
-	// restart synth
-	tunedSynth(synthesizers);
+$('#grounds a').on('click', function(e) {
+	e.preventDefault()
+	var $parent = $(this).parent();
+	// update state
+	if ($(this).parent().hasClass('active')) {
+		state.ground.splice(state.ground.indexOf(this.id))
+		console.log('id', this.id, 'grounds', grounds[this.id]);
+		grounds[this.id].stop();
+	} else {
+		state.ground.push(this.id)
+		grounds[this.id].start();
+	}
+	$(this).parent().toggleClass('active')
+
 })
 
 // instrument click handler
 $('#instruments a').on('click', function(e) {
+	// update state
+	state.synth = this.id
 	// update menu
 	$('#instruments li').removeClass('active')
 	$(this).parent().addClass('active')
 	e.preventDefault()
+
 	// reset socket listeners
 	socket.removeAllListeners('serverDown');
 	socket.removeAllListeners('serverDrag');
 	socket.removeAllListeners('serverUp');
 
+	// clear current synths
+	clearSynths()
+	socket.emit('synthChange', state.synth)
+})
+
+socket.on('newSynth', (newSynth) => {
 	// restart synth
-	instruments[this.id](synthesizers)
+	clearSynths();
+	instruments[newSynth](synthesizers)
 })
 
 // set up canvas
@@ -109,4 +151,13 @@ tool.onMouseUp =(event) => {
 		y: event.point.y,
 	}
   socket.emit('mouseUp', outEvent)
+}
+
+function clearSynths() {
+	Object.keys(synthesizers).forEach(id => {
+		Object.keys(synthesizers[id]).forEach(synth => {
+			synthesizers[id][synth].dispose()
+		})
+		synthesizers[id] = {}
+	})
 }
