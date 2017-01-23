@@ -59,7 +59,7 @@ module.exports = function() {
 
 
 	// create drawing events
-	socket.on('serverDown', function(event) {
+	socket.on('serverDrawDown', function(event) {
 		var shadow = new Path();
 		var path = new Path();
 		path.fillColor = {
@@ -90,7 +90,7 @@ module.exports = function() {
 		};
 	})
 
-	socket.on('serverDrag', function(event) {
+	socket.on('serverDrawDrag', function(event) {
 		var middlePoint = new Point(event.middlePoint[1], event.middlePoint[2])
 		var step = new Point(event.delta[1] / 2, event.delta[2] / 2)
 		step.angle += 90;
@@ -114,7 +114,7 @@ module.exports = function() {
 
 	})
 
-	socket.on('serverUp', function(event) {
+	socket.on('serverDrawUp', function(event) {
 		var current = paths[event.id].currentPath.path;
 		var shadow = paths[event.id].currentPath.shadow;
 		current.add(new Point(event.x, event.y));

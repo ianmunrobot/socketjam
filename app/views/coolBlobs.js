@@ -59,8 +59,9 @@ module.exports = function() {
   var symbols = [symbol1, symbol2, symbol3, symbol4]
 
   for (var i = 0; i < count; i++) {
-    // The center position is a random point in the view
-    var center = new Point((view.size.width * -1 + view.size.width * ((i % 4) / 4)) + (view.size.width / 8), Math.random() * view.size.height);
+    // The center position is in one of four columns
+    let column = ((i % 4) / 4)
+    var center = new Point((view.size.width * -1 + view.size.width * column) + (view.size.width / 8), Math.random() * view.size.height);
     var placedSymbol = symbols[Math.floor(Math.random() * 4)].place(center);
     placedSymbol.speed = Math.random() * 4 - 2;
   }
@@ -73,9 +74,21 @@ module.exports = function() {
     }
   }
 
+  view.onResize = (event) => {
+    console.log(event);
+    for (var i = 0; i < count; i++) {
+      var item = project.activeLayer.children[i]
+      // if(i < 5) console.log('before', item.position.x);
+      let column = item.position.x / view.size.width + 1
+      // if (i < 5) console.log(column);
+      item.position.x += (event.delta.width * column)
+      // if (i < 5) console.log('after', item.position.x);
+    }
+  }
+
   // Space Circle Path:
 
-  socket.on('serverDown', function(event) {
+  socket.on('serverDrawDown', function(event) {
     var circlePath = new Path.Circle({
       center: [event.x, event.y],
       radius: 20,
@@ -93,7 +106,7 @@ module.exports = function() {
     }, 300);
   })
 
-  socket.on('serverDrag', function(event) {
+  socket.on('serverDrawDrag', function(event) {
     var last = paths[event.id].past[paths[event.id].past.length - 1]
     var circlePath = new Path.Circle({
       center: [event.x, event.y],
@@ -107,7 +120,7 @@ module.exports = function() {
     }, 300)
   });
 
-  socket.on('serverUp', function() {
+  socket.on('serverDrawUp', function() {
 
   })
 

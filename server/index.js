@@ -51,14 +51,21 @@ io.on('connection', socket => {
       // on 'draw' add to memory and draw to others in room
       socket.to(room).on('mouseDown', (inEvent) => {
         io.to(room).emit('serverDown', inEvent)
+        io.to(room).emit('serverDrawDown', inEvent)
       })
 
       socket.to(room).on('mouseDrag', (inEvent) => {
         io.to(room).emit('serverDrag', inEvent)
+        io.to(room).emit('serverDrawDrag', inEvent)
       })
 
       socket.to(room).on('mouseUp', (event) => {
-          io.to(room).emit('serverUp', event)
+        io.to(room).emit('serverUp', event)
+        io.to(room).emit('serverDrawUp', event)
+      })
+
+      socket.to(room).on('synthChange', (event) => {
+        io.to(room).emit('newSynth', event)
       })
 
       // log on disconnect

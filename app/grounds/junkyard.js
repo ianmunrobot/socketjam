@@ -18,13 +18,13 @@ var drum1 = new Tone.MembraneSynth({
     "decay" : 0.5,
     "sustain" : 0
   },
-  "volume": -6
+  "volume": -3
 }).chain(drumCompress);
 
 
 var membranePart = new Tone.Sequence(function(time, pitch){
   drum1.triggerAttack(pitch, time, Math.random()*0.5 + 0.5);
-}, ["F2", 'F3', "Eb3", "C3", null, "C3", null, "Eb2"], "8n").start(0);
+}, ["F2", 'F3', "Eb3", "C3", null, "C3", null, "Eb2"], "8n")
 membranePart.loop = true;
 membranePart.loopEnd = "1m";
 
@@ -38,7 +38,7 @@ var drum2 = new Tone.MembraneSynth({
     "decay" : 0.5,
     "sustain" : 0
   },
-  "volume": -12
+  "volume": -10
 }).chain(drumCompress);
 
 var dingPart = new Tone.Part(function(time, event){
@@ -63,7 +63,6 @@ var dingPart = new Tone.Part(function(time, event){
       {time : "3:2 + 4t", note : "F5", dur : "8n", prob : 0.4},
       {time : "3:2 + 4t*2", note : "Bb4", dur : "8n", prob : 0.9}
     ])
-  .start(0);
 
 dingPart.loop = true;
 dingPart.loopEnd = "2m";
@@ -78,7 +77,7 @@ dingPart.loopEnd = "2m";
 			"volume" : -24
 		}).chain(drumCompress)
 
-var bellPart2 = new Tone.Part(function(time, event){
+var bellPart = new Tone.Part(function(time, event){
   if (Math.random() < event.prob){
     bell.frequency.setValueAtTime(event.note, time, Math.random()*0.3 + 0.3);
     bell.triggerAttack(time);
@@ -92,11 +91,30 @@ var bellPart2 = new Tone.Part(function(time, event){
   {time : "0:1 + 16t", note : 133, dur : "8t", prob : 1},
   {time : "0:1 + 8n + 8t", note : 200, dur : "16t", prob : 0.75}
   ])
-.start(0)
 
-bellPart2.loop = true;
-bellPart2.loopEnd = "2n"
+bellPart.loop = true;
+bellPart.loopEnd = "2n"
 
 Tone.Transport.bpm.value = 72;
 
 Tone.Transport.start("+0.1")
+
+function start() {
+  Tone.Transport.bpm.value = 72;
+  membranePart.start('1m')
+  dingPart.start('2m')
+  bellPart.start('5m')
+  Tone.Transport.start("+0.1")
+}
+
+function stop() {
+  console.log('stopping!');
+  bellPart.stop(0)
+  dingPart.stop('1m')
+  membranePart.stop('2m')
+}
+
+module.exports = {
+  start,
+  stop
+}

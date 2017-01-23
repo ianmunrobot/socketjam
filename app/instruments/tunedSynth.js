@@ -12,6 +12,16 @@ var scale = [
 ]
 
 module.exports = function(synthesizers) {
+  function populate () {
+    Object.keys(synthesizers).forEach(id => {
+      let newSynth = new Tone.DuoSynth({harmonicity: 1.5}).chain(reverb)
+      newSynth.volume.value = -15;
+      synthesizers[id] = {
+        synth: newSynth
+      }
+    })
+  }
+  populate();
 
   // helper function - change synth frequency
   function changeFrequency(id, name, location) {
