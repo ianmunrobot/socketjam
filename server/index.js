@@ -18,12 +18,14 @@ const memory = {};
 
 var port = process.env.PORT || 1337
 
-server.listen(port, () => console.log('The server is listening on port 1337!'));
+server.listen(port, () => console.log(`The server is listening on port ${port}`));
 
 let variable = path.join(__dirname, '../public')
 
 // serve static files
 app.use('/paper', express.static(path.join(__dirname, '../node_modules/paper/dist')));
+app.use('/jquery', express.static(path.join(__dirname, '../node_modules/jquery/dist')));
+app.use('/bootstrap', express.static(path.join(__dirname, '../node_modules/bootstrap/dist')));
 app.use('/startaudiocontext', express.static(path.join(__dirname, '../node_modules/startaudiocontext')));
 app.use('/socket', express.static(path.join(__dirname, '../node_modules/socket.io-client/dist')));
 app.use(express.static(path.join(__dirname, '../public')));
@@ -48,27 +50,31 @@ io.on('connection', socket => {
 
       // on 'draw' add to memory and draw to others in room
       socket.to(room).on('mouseDown', (inEvent) => {
-        io.to(room).emit('mouseDown', inEvent)
+        io.to(room).emit('serverDown', inEvent)
       })
 
       socket.to(room).on('mouseDrag', (inEvent) => {
-        io.to(room).emit('mouseDrag', inEvent)
+        io.to(room).emit('serverDrag', inEvent)
       })
 
       socket.to(room).on('mouseUp', (event) => {
-          io.to(room).emit('mouseUp', event)
+          io.to(room).emit('serverUp', event)
       })
 
       // log on disconnect
       socket.on('disconnect', () => {
         socket.leave(room);
-        console.log(chalk.yellow(`leaving: ${socket.id}`))
+        console.log(chalk.yellow(`leaving:\n\t${socket.id}`))
         let deleteIndex = memory[room].indexOf(socket.id)
         if (deleteIndex !== -1) memory[room].splice(deleteIndex)
       });
     })
   });
 
-app.use('/', (req, res) => {
+app.use('/:roomId', (req, res) => {
   res.sendFile(path.join(__dirname, '../index.html'));
 });
+
+app.use('/', (req, res, next) => {
+  res.redirect('/1')
+})

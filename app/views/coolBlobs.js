@@ -74,7 +74,7 @@ module.exports = function() {
 
   // Space Circle Path:
 
-  socket.on('mouseDown', function(event) {
+  socket.on('serverDown', function(event) {
     var circlePath = new Path.Circle({
       center: [event.x, event.y],
       radius: 20,
@@ -90,7 +90,7 @@ module.exports = function() {
     }, 300);
   })
 
-  socket.on('mouseDrag', function(event) {
+  socket.on('serverDrag', function(event) {
     var last = paths[event.id][paths[event.id].length - 1]
     var circlePath = new Path.Circle({
       center: [event.x, event.y],
@@ -104,7 +104,7 @@ module.exports = function() {
     }, 300)
   });
 
-  socket.on('mouseUp', function() {
+  socket.on('serverUp', function() {
 
   })
 
