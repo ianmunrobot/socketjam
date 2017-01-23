@@ -1,89 +1,61 @@
 const Tone = require('tone')
 
 const socket = require('./socket')
+
 const spaceCircle = require('./views/spaceCircle')
 const coolBlobs = require('./views/coolBlobs')
 
-StartAudioContext(Tone.context, '#test').then(function(){
+const start = require('./toneCenter').start
+const duoSynth = require('./instruments/duoSynth');
 
-})
+const views = {
+	spaceCircle,
+	coolBlobs
+}
 
+// main synth memory
+const synthesizers = {};
+
+// start with audio defaults
+start();
+duoSynth(synthesizers)
 const drums = require('./basic-beat')
 
+// menu click handler
+$('a').on('click', function(e) {
+	// update menu
+	$('li').removeClass('active')
+	$(this).parent().addClass('active')
+	e.preventDefault()
+	// reset socket listeners
+	socket.removeAllListeners('serverDown');
+	socket.removeAllListeners('serverDrag');
+	socket.removeAllListeners('serverUp');
 
+	// reset and repopulate view
+	project.clear();
+	views[this.id]();
+
+	// restart synth
+	duoSynth(synthesizers);
+})
+
+// set up canvas
 const canvas = document.getElementById('paperCanvas');
 paper.setup(canvas);
 paper.install(window);
 
-// const drums = require('./basic-beat')
+// begin view default
+spaceCircle();
+
 let room = window.location.pathname.slice(1);
-
-// synthesizer memory
-let synthesizers = {}
-
-//create a synth and connect it to the master output (your speakers)
-var reverb = new Tone.JCReverb(0.25).connect(Tone.Master)
-
-// helper function - change synth frequency
-function changeFrequency(id, direction, frequency) {
-  synthesizers[id][direction].frequency.value = frequency
-}
-
-function changeAmplitude(id, amplitude) {
-  // var newAmp = amplitude * -3
-  // console.log('newAmp:', newAmp);
-  // synthesizers[id].x.volume.value = newAmp;
-  // synthesizers[id].y.volume.value = newAmp;
-}
-
-function attack(id) {
-  synthesizers[id].x.triggerAttack(synthesizers[id].x.frequency.value)
-  synthesizers[id].y.triggerAttack(synthesizers[id].x.frequency.value * 1.5)
-}
-
-function release(id) {
-  synthesizers[id].x.triggerRelease()
-  synthesizers[id].y.triggerRelease()
-}
 
 // on connection, emit event to join a specific room
 socket.on('connect', () => {
-    socket.emit('create', room);
+	socket.emit('create', room);
 });
 
-socket.on('populateSynths', (ids) => {
-  ids.forEach(id => {
-    let newXSynth1 = new Tone.DuoSynth({harmonicity: 1.5}).chain(reverb)
-    let newYSynth2 = new Tone.DuoSynth({harmonicity: 1.5}).chain(reverb)
-    newXSynth1.volume.value = -15;
-    newYSynth2.volume.value = -15;
-    synthesizers[id] = {
-      x: newXSynth1,
-      y: newYSynth2
-    }
-  })
-})
-
-socket.on('mouseDown', (event) => {
-  changeFrequency(event.id, 'x', event.x)
-	changeFrequency(event.id, 'y', event.x * 1.5)
-  attack(event.id)
-})
-
-socket.on('mouseDrag', (event) => {
-  // console.log(event);
-  let amplitude = Math.abs(event.delta[1]) + Math.abs(event.delta[2])
-  changeAmplitude(event.id, amplitude)
-  changeFrequency(event.id, 'x', event.x)
-  changeFrequency(event.id, 'y', event.x * 1.5)
-})
-
-socket.on('mouseUp', (event) => {
-  release(event.id)
-})
-
-// drawing tool
-
+// drawing tool emitters
 var tool = new Tool()
 tool.minDistance = 10;
 tool.maxDistance = 30;
@@ -116,5 +88,3 @@ tool.onMouseUp =(event) => {
 	}
   socket.emit('mouseUp', outEvent)
 }
-
-coolBlobs();
