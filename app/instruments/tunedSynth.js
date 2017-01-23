@@ -24,10 +24,11 @@ module.exports = function(synthesizers) {
   populate();
 
   // helper function - change synth frequency
-  function changeFrequency(id, name, location) {
+  function changeFrequency(id, name, location, yLocation) {
     let newIndex = Math.floor((location / view.size.width) * scale.length);
     let newFreq = scale[newIndex]
     synthesizers[id][name].setNote(newFreq)
+    synthesizers[id][name].vibratoAmount.value = yLocation / view.size.height
   }
 
   function attack(id, location) {
@@ -56,7 +57,7 @@ module.exports = function(synthesizers) {
   })
 
   socket.on('serverDrag', (event) => {
-    changeFrequency(event.id, 'synth', event.x)
+    changeFrequency(event.id, 'synth', event.x, event.y)
   })
 
   socket.on('serverUp', (event) => {
