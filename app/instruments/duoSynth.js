@@ -7,7 +7,6 @@ const reverb = require('../toneCenter').reverb
 const socket = require('../socket')
 
 module.exports = function(synthesizers) {
-  console.log(synthesizers);
 
   // helper function - change synth frequency
   function changeFrequency(id, direction, frequency) {
