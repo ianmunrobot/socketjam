@@ -72,6 +72,11 @@ module.exports = function() {
 			saturation: 0.5,
 			brightness: 0.8,
 		};
+		// glow shadow
+		shadow.shadowColor =  path.fillColor,
+		shadow.shadowBlur =  20,
+		shadow.shadowOffset = [Math.random() * 10, Math.random()]
+
 		path.add(new Point(event.x, event.y));
 		shadow.add(new Point(event.x, event.y));
 		if (!paths[event.id]) {
